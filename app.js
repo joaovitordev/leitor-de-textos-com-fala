@@ -39,37 +39,34 @@ const setVoice = event => {
 const addExpressionBoxesIntoDOM = () => {
     main.innerHTML = humanExpressions.map(({ img, text }) => `
         <div class="expression-box">
-            <img src="${img}" alt="${text}">
-            <p class="info">${text}</p>
+            <img src="${img}" alt="${text}" data-js="${text}">
+            <p class="info" data-js="${text}">${text}</p>
         </div>
     `).join('')
 }
 
 addExpressionBoxesIntoDOM()
 
-// const createExpressionBox = ({ img, text }) => {
-//     const div = document.createElement('div')
+const setStyleOfClickedDiv = dataValue => {
+    const div = document.querySelector(`[data-js]="${dataValue}"`)
+    div.classList.add('active')
+    setTimeout(() => {
+        div.classList.remove('active')
+    }, 1000)
+}
 
-//     div.classList.add('expression-box')
-//     div.innerHTML = `
-//         <img src="${img}" alt="${text}">
-//         <p class="info">${text}</p>
-//     `
+main.addEventListener('click', event => {
+    const clickedElement = event.target
+    const clickedElementText = clickedElement.dataset.js
+    const clickedElementTextMustBeSpoken = ['IMG', 'P'].some(elementName =>
+        clickedElement.tagName.toLowerCase() === elementName.toLowerCase())
 
-//     div.addEventListener('click', () => {
-//         setTextMessage(text)
-//         speakText()
-
-//         div.classList.add('active')
-//         setTimeout(() => {
-//             div.classList.remove('active')
-//         }, 1000)
-//     })
-
-//     main.appendChild(div)
-// }
-
-// humanExpressions.forEach(createExpressionBox)
+    if (clickedElementTextMustBeSpoken) {
+        setTextMessage(clickedElementText)
+        speakText()
+        setStyleOfClickedDiv(clickedElementText)
+    }
+})
 
 let voices = []
 
@@ -80,8 +77,6 @@ speechSynthesis.addEventListener('voiceschanged', () => {
         voice.name === 'Google português do Brasil')
     const microsoftVoice = voices.find(voice => 
         voice.name === 'Microsoft Maria Desktop - Portuguese(Brazil)')
-
-
 
     voices.forEach(({name, lang}) => {
         const option = document.createElement('option')
