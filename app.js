@@ -36,29 +36,40 @@ const setVoice = event => {
     utterance.voice = selectedVoice
 }
 
-const createExpressionBox = ({ img, text }) => {
-    const div = document.createElement('div')
-
-    div.classList.add('expression-box')
-    div.innerHTML = `
-        <img src="${img}" alt="${text}">
-        <p class="info">${text}</p>
-    `
-
-    div.addEventListener('click', () => {
-        setTextMessage(text)
-        speakText()
-
-        div.classList.add('active')
-        setTimeout(() => {
-            div.classList.remove('active')
-        }, 1000)
-    })
-
-    main.appendChild(div)
+const addExpressionBoxesIntoDOM = () => {
+    main.innerHTML = humanExpressions.map(({ img, text }) => `
+        <div class="expression-box">
+            <img src="${img}" alt="${text}">
+            <p class="info">${text}</p>
+        </div>
+    `).join('')
 }
 
-humanExpressions.forEach(createExpressionBox)
+addExpressionBoxesIntoDOM()
+
+// const createExpressionBox = ({ img, text }) => {
+//     const div = document.createElement('div')
+
+//     div.classList.add('expression-box')
+//     div.innerHTML = `
+//         <img src="${img}" alt="${text}">
+//         <p class="info">${text}</p>
+//     `
+
+//     div.addEventListener('click', () => {
+//         setTextMessage(text)
+//         speakText()
+
+//         div.classList.add('active')
+//         setTimeout(() => {
+//             div.classList.remove('active')
+//         }, 1000)
+//     })
+
+//     main.appendChild(div)
+// }
+
+// humanExpressions.forEach(createExpressionBox)
 
 let voices = []
 
