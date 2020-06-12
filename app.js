@@ -68,34 +68,40 @@ main.addEventListener('click', event => {
     }
 })
 
+const insertOptionElementIntoDOM = voices => {
+    selectElement.innerHTML = voices.reduce((accumulator, { name, lang }) => {
+        accumulator += `<option value="${name}">${lang} | ${name}</option>`
+        return accumulator
+    }, '')
+}
+
+const setUtteranceVoice = voice => {
+    utterance.voice = voice
+    const voiceOptionElement = selectElement
+        .querySelector(`[value="${voice.name}"]`)
+        voiceOptionElement.selected = true
+}
+
+const setPTBRVoices = voices => {
+    const googleVoice = voices.find(voice =>
+        voice.name === 'Google português do Brasil')
+    const microsoftVoice = voices.find(voice =>
+        voice.name === 'Microsoft Maria Desktop - Portuguese(Brazil)')
+
+    if (googleVoice) {
+        setUtteranceVoice(googleVoice)
+    } else if (microsoftVoice) {
+        setUtteranceVoice(microsoftVoice)
+    }
+}
+
 let voices = []
 
 speechSynthesis.addEventListener('voiceschanged', () => {
     voices = speechSynthesis.getVoices()
 
-    const optionsElements = voices.reduce((accumulator, { name, lang }) => {
-        accumulator += `<option value="${name}">${lang} | ${name}</option>`
-        return accumulator
-    }, '')
-
-    selectElement.innerHTML = optionsElements
-
-    const googleVoice = voices.find(voice => 
-        voice.name === 'Google português do Brasil')
-    const microsoftVoice = voices.find(voice => 
-        voice.name === 'Microsoft Maria Desktop - Portuguese(Brazil)')
-
-    if (googleVoice) {
-        utterance.voice = googleVoice
-        const googleOptionElement = selectElement
-            .querySelector(`[value]="${googleVoice.name}"`)
-        googleOptionElement.selected = true
-    } else if (microsoftVoice) {
-        utterance.voice = microsoftVoice
-        const microsoftOptionElement = selectElement
-            .querySelector(`[value]="${microsoftVoice.name}"`)
-        microsoftOptionElement.selected = true
-    }
+    insertOptionElementIntoDOM(voices)
+    setPTBRVoices(voices)
 
 })
 
