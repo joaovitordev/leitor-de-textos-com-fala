@@ -73,27 +73,30 @@ let voices = []
 speechSynthesis.addEventListener('voiceschanged', () => {
     voices = speechSynthesis.getVoices()
 
+    const optionsElements = voices.reduce((accumulator, { name, lang }) => {
+        accumulator += `<option value="${name}">${lang} | ${name}</option>`
+        return accumulator
+    }, '')
+
+    selectElement.innerHTML = optionsElements
+
     const googleVoice = voices.find(voice => 
         voice.name === 'Google português do Brasil')
     const microsoftVoice = voices.find(voice => 
         voice.name === 'Microsoft Maria Desktop - Portuguese(Brazil)')
 
-    voices.forEach(({name, lang}) => {
-        const option = document.createElement('option')
+    if (googleVoice) {
+        utterance.voice = googleVoice
+        const googleOptionElement = selectElement
+            .querySelector(`[value]="${googleVoice.name}"`)
+        googleOptionElement.selected = true
+    } else if (microsoftVoice) {
+        utterance.voice = microsoftVoice
+        const microsoftOptionElement = selectElement
+            .querySelector(`[value]="${microsoftVoice.name}"`)
+        microsoftOptionElement.selected = true
+    }
 
-        option.value = name
-
-        if (googleVoice && option.value === googleVoice.name) {
-            utterance.voice = googleVoice
-            option.selected = true
-        } else if (microsoftVoice && option.value === microsoftVoice.name) {
-            utterance.voice = microsoftVoice
-            option.selected = true
-        }
-
-        option.textContent = `${lang} | ${name}`
-        selectElement.appendChild(option)
-    })
 })
 
 buttonInsertText.addEventListener('click', () => {
